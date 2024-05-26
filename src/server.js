@@ -1,6 +1,6 @@
 const app = require("./app");
-const port = 3000;
+const { serverPort } = require("./secret");
 
-app.listen(port, () => {
-  console.log(`http://localhost:${port}`);
+app.listen(serverPort, () => {
+  console.log(`http://localhost:${serverPort}`);
 });

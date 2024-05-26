@@ -3,6 +3,7 @@ const app = express();
 const morgan = require("morgan");
 const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
+const { userRoutes } = require("./routes/userRoutes");
 
 // limit set for max api request
 
@@ -18,13 +19,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(limiter);
 
-// test api
+// all routes
 
-app.get("/api/user", (req, res) => {
-  res.status(200).send({
-    message: "User profile returned successfully",
-  });
-});
+app.use("/api/users", userRoutes);
+
+// test api
 
 app.get("/", (req, res) => {
   res.status(200).send({
