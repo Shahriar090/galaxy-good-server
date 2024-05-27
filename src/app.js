@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
 const { userRoutes } = require("./routes/userRoutes");
+const seedRoute = require("./routes/seedRoutes");
 
 // limit set for max api request
 
@@ -22,6 +23,7 @@ app.use(limiter);
 // all routes
 
 app.use("/api/users", userRoutes);
+app.use("/api/seed", seedRoute);
 
 // test api
 
