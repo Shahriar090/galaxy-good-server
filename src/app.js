@@ -5,6 +5,7 @@ const createError = require("http-errors");
 const rateLimit = require("express-rate-limit");
 const { userRoutes } = require("./routes/userRoutes");
 const seedRoute = require("./routes/seedRoutes");
+const { errorResponse } = require("./controllers/responseController");
 
 // limit set for max api request
 
@@ -43,8 +44,8 @@ app.use((req, res, next) => {
 // server error handling
 
 app.use((err, req, res, next) => {
-  return res.status(err.status || 500).json({
-    success: false,
+  return errorResponse(res, {
+    statusCode: err.status,
     message: err.message,
   });
 });
