@@ -91,4 +91,29 @@ const deleteUserById = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUserById, deleteUserById };
+// register user process
+const processRegister = async (req, res, next) => {
+  try {
+    const { name, email, password, phone, address } = req.body;
+    const isUserExist = await User.exists({ email: email });
+    if (isUserExist) {
+      throw createError(409, "User Already Exist.Please Login To Continue");
+    }
+    const newUser = {
+      name,
+      email,
+      password,
+      phone,
+      address,
+    };
+    return successResponse(res, {
+      statusCode: 200,
+      message: "User Created Successfully",
+      payload: { newUser },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getUsers, getUserById, deleteUserById, processRegister };
