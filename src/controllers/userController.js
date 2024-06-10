@@ -3,6 +3,8 @@ const User = require("../models/userModel");
 const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findWithId");
 const deleteImage = require("../helper/deleteImage");
+const { createJsonWebToken } = require("../helper/jsonWebToken");
+const { jwtActivationKey } = require("../secret");
 
 // get all users
 const getUsers = async (req, res, next) => {
@@ -99,17 +101,16 @@ const processRegister = async (req, res, next) => {
     if (isUserExist) {
       throw createError(409, "User Already Exist.Please Login To Continue");
     }
-    const newUser = {
-      name,
-      email,
-      password,
-      phone,
-      address,
-    };
+    // this function is from helper folder's jsonWebToken.js file
+    const token = createJsonWebToken(
+      { name, email, password, phone, address },
+      jwtActivationKey,
+      "10m"
+    );
     return successResponse(res, {
       statusCode: 200,
       message: "User Created Successfully",
-      payload: { newUser },
+      payload: { token },
     });
   } catch (error) {
     next(error);
