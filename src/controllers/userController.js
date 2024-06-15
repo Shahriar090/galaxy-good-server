@@ -4,7 +4,7 @@ const { successResponse } = require("./responseController");
 const { findWithId } = require("../services/findWithId");
 const deleteImage = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
-const { jwtActivationKey } = require("../secret");
+const { jwtActivationKey, clientUrl } = require("../secret");
 
 // get all users
 const getUsers = async (req, res, next) => {
@@ -107,6 +107,16 @@ const processRegister = async (req, res, next) => {
       jwtActivationKey,
       "10m"
     );
+
+    // prepare email
+    const emailData = {
+      email,
+      subject: "Account Activation Email",
+      html: `
+      <h2>Hello ${name}!</h2>
+      <p>Please Click Here To <a href="${clientUrl}/api/users/activate/${token}" target="_blank">Activate Your Account</a></P>
+      `,
+    };
     return successResponse(res, {
       statusCode: 200,
       message: "User Created Successfully",
