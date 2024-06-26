@@ -144,12 +144,31 @@ const activateUserAccount = async (req, res, next) => {
       throw createError(404, "Token Not Found");
     }
     // verifying user token
-    const decodedInfo = jwt.verify(token, jwtActivationKey);
-    await User.create(decodedInfo);
-    return successResponse(res, {
-      statusCode: 201,
-      message: "User Registration Successful",
-    });
+    try {
+      const decodedInfo = jwt.verify(token, jwtActivationKey);
+      if (!decodedInfo) {
+        throw createError(401, "User Not Verified");
+      }
+
+      // checking if the user already exist
+      const isUserExist = await User.exists({ email: decodedInfo.email });
+      if (isUserExist) {
+        throw createError(409, "User With This Email Already Exist");
+      }
+      await User.create(decodedInfo);
+      return successResponse(res, {
+        statusCode: 201,
+        message: "User Registration Successful",
+      });
+    } catch (error) {
+      if (error.name === "TokenExpiredError") {
+        throw createError(401, "Token Expired");
+      } else if (error.name === "JsonWebTokenError") {
+        throw createError(401, "Invalid Token");
+      } else {
+        throw error;
+      }
+    }
   } catch (error) {
     next(error);
   }
