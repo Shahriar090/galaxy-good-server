@@ -6,6 +6,7 @@ const deleteImage = require("../helper/deleteImage");
 const { createJsonWebToken } = require("../helper/jsonWebToken");
 const { jwtActivationKey, clientUrl } = require("../secret");
 const { emailWithNodeMailer } = require("../helper/email");
+const jwt = require("jsonwebtoken");
 
 // get all users
 const getUsers = async (req, res, next) => {
@@ -135,4 +136,29 @@ const processRegister = async (req, res, next) => {
   }
 };
 
-module.exports = { getUsers, getUserById, deleteUserById, processRegister };
+const activateUserAccount = async (req, res, next) => {
+  try {
+    const token = req.body.token;
+
+    if (!token) {
+      throw createError(404, "Token Not Found");
+    }
+    // verifying user token
+    const decodedInfo = jwt.verify(token, jwtActivationKey);
+    await User.create(decodedInfo);
+    return successResponse(res, {
+      statusCode: 201,
+      message: "User Registration Successful",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getUsers,
+  getUserById,
+  deleteUserById,
+  processRegister,
+  activateUserAccount,
+};
