@@ -122,7 +122,7 @@ const processRegister = async (req, res, next) => {
 
     // send email with node mailer
     try {
-      await emailWithNodeMailer(emailData);
+      // await emailWithNodeMailer(emailData);
     } catch (emailError) {
       next(createError(500, "Failed To Send Verification Email"));
     }
@@ -136,6 +136,7 @@ const processRegister = async (req, res, next) => {
   }
 };
 
+// user account activation route
 const activateUserAccount = async (req, res, next) => {
   try {
     const token = req.body.token;
